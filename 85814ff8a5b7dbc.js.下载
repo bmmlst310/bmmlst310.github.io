@@ -1,0 +1,83 @@
+
+;
+    (function(){
+        window.collect_target = {
+            tkind: "1013",
+            tid: "302224943"
+        }
+        window.update_collect_state = function(collected){
+            var ele = document.querySelector('.lnk-doulist-add');
+            var old_num = parseInt(ele.querySelector('.react-num').textContent);
+            ele.className = 'lnk-doulist-add';
+            if(collected){
+                ele.className += ' collect-cancel';
+                ele.querySelector('.react-text').textContent = '已收藏';
+                ele.querySelector('.react-num').textContent = isNaN(old_num) ? 1 : old_num + 1;
+            }else{
+                ele.className += ' collect-add';
+                ele.querySelector('.react-text').textContent = '收藏';
+                ele.querySelector('.react-num').textContent = isNaN(old_num) ? "" : old_num - 1 === 0 ? "" : old_num - 1;
+            }
+        }
+    })();
+;
+            Douban.init_on_blacklist = function(node) {
+                $(node).click(function(e) {
+                    e.preventDefault()
+                    alert('你已被对方加入黑名单，不能转发该日记')
+                })
+            };
+        ;
+var dialogJoinGroup = $(".dialog_join_group");
+window._JOIN_POPUP_DIALOG = function() {
+    dialogJoinGroup.css('display', 'block');
+}
+$(".join_group_cancel, .join_group_close").bind('click', function(e) {
+    dialogJoinGroup.css('display', 'none');
+})
+;
+    $('.img-uploader-wrapper').bind('click', function(e){
+        $(this).find('.img-upload-input').click();
+    })
+    $('.img-upload-input').bind('click', function(e){
+        e.stopPropagation();
+    });
+    $('.img-upload-input').bind('change', function(){
+        if(!this.files.length) return;
+        if(!window.FileReader) return;
+        var reader = new FileReader();
+        var that = this;
+        $(this).parent().addClass('added');
+        reader.onload = function(){
+            $(that).parent().prepend('<img class="img-preview" src="' + reader.result + '">')
+        }
+        reader.readAsDataURL(this.files[0]);
+    })
+    $('.remove-img').bind('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).parent().find('.img-preview').remove();
+        $(this).parent().find('.img-upload-input').val('');
+        $(this).parent().removeClass('added');
+    })
+
+    $("#joingroupbtn").click(function(e){
+        url = "/j/group/" + $(this).attr("name") + "/join";
+        if(window._USER_ABNORMAL) {
+            e.preventDefault()
+            window.show_abnormal && window.show_abnormal()
+            return
+        }
+        $.post_withck(url, {},
+            function(sjson){
+                var ret = eval("(" + sjson + ")");
+                $("#joingroupbtn").hide();
+                if (ret.result=="toomany" || ret.result=="need_extra"){
+                    $("#replysect").html('<p class="attn" align="right">你已经加入了13个小组，无法再加入更多小组。</p>');
+                }else{
+                    $("#replysect").html('<br/><h2>你现在加入了这个小组，可以发表回应</h2><div class="txd comment-form"><form name="comment_form" method="post" action="add_comment"><textarea name="rv_comment" rows="8" cols="54"></textarea><br/><input type="hidden" name="start" value="0"/><input type="hidden" name="ck" value="O9S5"/><span class="bn-flat-hot rr"><input type="submit" value="发送"/></span><span><label class="pl share-label share-shuo"><input type="checkbox" name="sync_to_mb"/>转发到广播 </label> </span></form></div>');
+                }
+            });
+        return false;
+    });
+
